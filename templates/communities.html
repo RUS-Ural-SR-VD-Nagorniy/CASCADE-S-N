@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="main-content">
+    <div class="sidebar">
+        <div class="user-info-card">
+            <h3><i class="fas fa-compass"></i> Обзор</h3>
+            <p style="font-size: 13px; margin-top: 8px;">Найдите сообщества по интересам</p>
+        </div>
+        <a href="{{ url_for('create_community') }}" class="btn btn-success" style="width: 100%; margin-top: 16px;">
+            <i class="fas fa-plus"></i> Создать сообщество
+        </a>
+    </div>
+    
+    <div class="feed">
+        <h1><i class="fas fa-users"></i> Сообщества</h1>
+        <p style="color: var(--text-light); margin-bottom: 24px;">Присоединяйтесь к сообществам по интересам или создавайте свои!</p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+            {% for community in communities %}
+            <div class="community-card">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                    <img src="{% if community.avatar %}{{ url_for('static', filename='uploads/community_avatars/' + community.avatar) }}{% else %}https://via.placeholder.com/60{% endif %}" 
+                         class="community-avatar">
+                    <div>
+                        <h3 style="margin: 0;"><a href="{{ url_for('community', community_id=community.id) }}">{{ community.name }}</a></h3>
+                        <p style="margin: 4px 0 0 0; font-size: 12px;">
+                            <i class="fas fa-users"></i> {{ community.members_count }} участников
+                        </p>
+                    </div>
+                </div>
+                
+                {% if community.description %}
+                    <p style="margin: 8px 0; font-size: 13px;">{{ community.description[:100] }}{% if community.description|length > 100 %}...{% endif %}</p>
+                {% endif %}
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                    <span style="font-size: 11px;">
+                        <i class="fas fa-crown"></i> {{ community.creator_name }}
+                    </span>
+                    {% if community.is_member %}
+                        <a href="{{ url_for('community', community_id=community.id) }}" class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">Открыть</a>
+                    {% else %}
+                        <a href="{{ url_for('join_community', community_id=community.id) }}" class="btn btn-success" style="padding: 6px 12px; font-size: 12px;">Присоединиться</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+                <p>Пока нет сообществ.</p>
+                <a href="{{ url_for('create_community') }}" class="btn" style="margin-top: 16px;">Создать первое сообщество</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <div class="right-sidebar">
+        <h3><i class="fas fa-lightbulb"></i> Рекомендации</h3>
+        <p style="font-size: 13px; margin-top: 8px;">
+            Присоединяйтесь к активным сообществам, чтобы находить новых друзей и делиться интересами!
+        </p>
+    </div>
+</div>
+{% endblock %}
